@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="color-scheme" content="light dark">
+<title>AITube — hisob</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{
+  --bg:var(--tg-theme-bg-color,#ffffff);--fg:var(--tg-theme-text-color,#14181f);--hint:var(--tg-theme-hint-color,#6b7480);
+  --card:var(--tg-theme-secondary-bg-color,#f2f4f8);--accent:var(--tg-theme-button-color,#2b7cff);--accent-fg:var(--tg-theme-button-text-color,#fff);
+  --ok:#1fa971;--bad:#e5484d;--line:rgba(127,127,127,.22);--r:16px;
+}
+@media (prefers-color-scheme:dark){:root{--bg:var(--tg-theme-bg-color,#0f1319);--fg:var(--tg-theme-text-color,#eef1f6);--hint:var(--tg-theme-hint-color,#8d97a6);--card:var(--tg-theme-secondary-bg-color,#192029)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body{min-height:100vh;padding:max(18px,env(safe-area-inset-top)) 18px max(18px,env(safe-area-inset-bottom));display:flex;flex-direction:column}
+main{width:100%;max-width:440px;margin:0 auto;flex:1;display:flex;flex-direction:column}
+.logo{display:flex;align-items:center;gap:12px;margin:6px 0 18px}
+.logo i{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-style:normal;font-size:24px;background:linear-gradient(135deg,var(--accent),#7a5cff);color:#fff;box-shadow:0 8px 24px -10px var(--accent)}
+.logo b{font-size:20px;letter-spacing:.2px}.logo small{display:block;color:var(--hint);font-size:13px}
+h1{font-size:24px;margin:4px 0 6px}p.sub{color:var(--hint);margin:0 0 18px}
+.screen{display:none;animation:in .28s ease both}.screen.on{display:flex;flex-direction:column;flex:1}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.screen{animation:none}}
+label{font-size:13px;color:var(--hint);display:block;margin:14px 0 6px}
+.field{position:relative}
+input[type=text],input[type=password]{width:100%;font:inherit;color:var(--fg);background:var(--card);border:1.5px solid transparent;border-radius:14px;padding:14px 46px 14px 14px;outline:none;transition:border .15s}
+input:focus{border-color:var(--accent)}input.bad{border-color:var(--bad)}input.good{border-color:var(--ok)}
+.eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:none;color:var(--hint);font-size:18px;padding:8px;cursor:pointer}
+.hint{font-size:12.5px;min-height:18px;margin:5px 2px 0;color:var(--hint)}.hint.bad{color:var(--bad)}.hint.good{color:var(--ok)}
+.meter{height:5px;border-radius:5px;background:var(--line);margin-top:8px;overflow:hidden}.meter i{display:block;height:100%;width:0;border-radius:5px;transition:width .25s,background .25s}
+.btn{appearance:none;border:0;width:100%;font:inherit;font-weight:600;border-radius:14px;padding:15px;margin-top:16px;cursor:pointer;background:var(--accent);color:var(--accent-fg);transition:transform .08s,opacity .15s}
+.btn:active{transform:scale(.985)}.btn[disabled]{opacity:.45;cursor:default}
+.btn.ghost{background:var(--card);color:var(--fg)}.btn.warn{background:var(--bad);color:#fff}
+.spacer{flex:1;min-height:14px}
+.links{text-align:center;margin-top:14px;color:var(--hint);font-size:14px}.links button{border:0;background:none;color:var(--accent);font:inherit;font-weight:600;cursor:pointer;padding:4px}
+.steps{display:flex;gap:6px;margin:0 0 16px}.steps i{flex:1;height:4px;border-radius:4px;background:var(--line)}.steps i.on{background:var(--accent)}
+.terms{background:var(--card);border-radius:var(--r);padding:6px 14px;max-height:46vh;overflow:auto;border:1px solid var(--line)}
+.term{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.term:last-child{border:0}
+.term span{font-size:22px;line-height:1.2}.term b{display:block;margin-bottom:2px}.term p{margin:0;color:var(--hint);font-size:14px}
+.agree{display:flex;gap:12px;align-items:flex-start;margin-top:14px;cursor:pointer;user-select:none}
+.agree input{width:22px;height:22px;margin:1px 0 0;accent-color:var(--accent);flex:none}
+.big{font-size:64px;text-align:center;margin:18px 0 4px}.center{text-align:center}
+.pill{display:inline-block;background:var(--card);border-radius:99px;padding:6px 14px;font-weight:600;margin:6px 0}
+.toast{position:fixed;left:16px;right:16px;bottom:max(16px,env(safe-area-inset-bottom));max-width:408px;margin:auto;background:var(--bad);color:#fff;padding:12px 14px;border-radius:12px;transform:translateY(140%);transition:transform .25s;font-size:14px}
+.toast.on{transform:none}
+</style>
+</head>
+<body>
+<main>
+  <div class="logo"><i>▶</i><div><b>AITube</b><small>Video, efir va joylash — bir joyda</small></div></div>
+
+  <!-- KIRISH -->
+  <section class="screen" id="s-login">
+    <h1>Kirish</h1><p class="sub">Hisobingizga login va parol bilan kiring.</p>
+    <label for="l-user">Login</label>
+    <div class="field"><input id="l-user" type="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="24" placeholder="masalan: sardor"></div>
+    <label for="l-pass">Parol</label>
+    <div class="field"><input id="l-pass" type="password" autocomplete="current-password" placeholder="••••••••" maxlength="200"><button class="eye" type="button" data-eye="l-pass" aria-label="Parolni ko'rsatish">👁</button></div>
+    <button class="btn" id="b-login" disabled>Kirish</button>
+    <div class="spacer"></div>
+    <div class="links">Hisobingiz yo'qmi? <button id="to-reg" type="button">Hisob yaratish</button></div>
+  </section>
+
+  <!-- RO'YXATDAN O'TISH: 1-qadam -->
+  <section class="screen" id="s-reg1">
+    <div class="steps"><i class="on"></i><i></i></div>
+    <h1>Hisob yaratish</h1><p class="sub">Shaxsiy hisobingiz — o'z YouTube kanalingiz, o'z videolaringiz.</p>
+    <label for="r-user">Login</label>
+    <div class="field"><input id="r-user" type="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="24" placeholder="3–24 belgi: a-z, 0-9, _ ."></div>
+    <div class="hint" id="h-user"></div>
+    <label for="r-name">Ismingiz (ixtiyoriy)</label>
+    <div class="field"><input id="r-name" type="text" autocomplete="name" maxlength="40" placeholder="Kanalda ko'rinadigan nom"></div>
+    <label for="r-pass">Parol</label>
+    <div class="field"><input id="r-pass" type="password" autocomplete="new-password" maxlength="200" placeholder="kamida 8 belgi, harf va raqam"><button class="eye" type="button" data-eye="r-pass" aria-label="Parolni ko'rsatish">👁</button></div>
+    <div class="meter"><i id="meter"></i></div><div class="hint" id="h-pass"></div>
+    <label for="r-pass2">Parolni takrorlang</label>
+    <div class="field"><input id="r-pass2" type="password" autocomplete="new-password" maxlength="200" placeholder="••••••••"></div>
+    <div class="hint" id="h-pass2"></div>
+    <button class="btn" id="b-next" disabled>Davom etish</button>
+    <div class="spacer"></div>
+    <div class="links">Hisobingiz bormi? <button id="to-login" type="button">Kirish</button></div>
+  </section>
+
+  <!-- RO'YXATDAN O'TISH: 2-qadam (shartlar) -->
+  <section class="screen" id="s-reg2">
+    <div class="steps"><i class="on"></i><i class="on"></i></div>
+    <h1>Shartlar</h1><p class="sub">Qisqa va aniq — iltimos, o'qib chiqing.</p>
+    <div class="terms" id="terms">
+      <div class="term"><span>🔐</span><div><b>Hisob va xavfsizlik</b><p>Parolingiz telefoningizda xeshlanadi va ochiq holda hech qayerga yuborilmaydi. Uni boshqalarga bermang. Parolni unutsangiz, uni admin tiklay olmaydi — yangi hisob ochasiz.</p></div></div>
+      <div class="term"><span>📺</span><div><b>YouTube ruxsati</b><p>Kanalingizni ulaganingizda bot faqat sizning nomingizdan video joylaydi, efir ochadi va statistikani o'qiydi. Ulanishni istalgan payt botda yoki Google hisobingiz sozlamalarida bekor qila olasiz.</p></div></div>
+      <div class="term"><span>🎬</span><div><b>Kontent uchun javobgarlik</b><p>Joylagan videolaringiz uchun siz javobgarsiz: YouTube qoidalari, mualliflik huquqi va qonunlarga rioya qiling. AI yaratgan kontent YouTube talabiga ko'ra tegishli belgilanadi.</p></div></div>
+      <div class="term"><span>⚙️</span><div><b>Adolatli foydalanish</b><p>Server resursi hamma uchun umumiy: og'ir ishlar (video yasash, efir) navbat bilan bajariladi va chegaralangan. Tizimni ortiqcha yuklash yoki suiiste'mol qilish hisobning bloklanishiga olib keladi.</p></div></div>
+      <div class="term"><span>🗂</span><div><b>Ma'lumotlaringiz</b><p>Saqlanadi: login, ismingiz, sozlamalar, videolar va YouTube ulanish tokeni. Hisobdan chiqsangiz ma'lumotlar saqlanib qoladi; hisobni o'chirishni admindan so'rashingiz mumkin.</p></div></div>
+    </div>
+    <label class="agree" for="c-agree"><input type="checkbox" id="c-agree"><span>Shartlarni o'qidim va <b>roziman</b></span></label>
+    <button class="btn" id="b-create" disabled>Hisob yaratish</button>
+    <button class="btn ghost" id="b-back1" type="button">Orqaga</button>
+  </section>
+
+  <!-- HISOB YARATILDI -->
+  <section class="screen" id="s-done">
+    <div class="big">🎉</div>
+    <h1 class="center">Hisob yaratildi!</h1>
+    <p class="sub center">Xush kelibsiz, <span class="pill" id="d-user"></span><br>Endi botga qayting — hisobingiz darrov faollashadi.</p>
+    <div class="spacer"></div>
+    <button class="btn" id="b-return">Botga qaytish</button>
+  </section>
+
+  <!-- HISOBDA (qayta ochilganda) -->
+  <section class="screen" id="s-acc">
+    <div class="big">👤</div>
+    <h1 class="center">Siz hisobdasiz</h1>
+    <p class="sub center">Hozirgi hisob: <span class="pill" id="a-user"></span><br>Yangi hisob ochish uchun avval hisobdan chiqish kerak.</p>
+    <div class="spacer"></div>
+    <button class="btn" id="b-open">Botga qaytish</button>
+    <button class="btn warn" id="b-switch">Hisobdan chiqib, yangi hisob ochish</button>
+    <p class="sub center" style="margin-top:12px;font-size:13px">«Chiqish» bosilgach bot sizdan tasdiq so'raydi. Hisob ma'lumotlari saqlanadi — keyin qaytib kira olasiz.</p>
+  </section>
+</main>
+<div class="toast" id="toast" role="alert"></div>
+
+<script>
+(()=>{
+"use strict";
+const tg = window.Telegram && window.Telegram.WebApp;
+if(tg){tg.ready();tg.expand();try{tg.disableVerticalSwipes&&tg.disableVerticalSwipes()}catch(e){}}
+const $=id=>document.getElementById(id), q=new URLSearchParams(location.search);
+const ITERS=100000, RESERVED=new Set(["admin","administrator","root","bot","support","system","aitube","null","none","user"]);
+const USER_RE=/^[a-z0-9][a-z0-9_.]{2,23}$/;
+const buzz=t=>{try{tg&&tg.HapticFeedback&&tg.HapticFeedback.notificationOccurred(t)}catch(e){}};
+const tap=()=>{try{tg&&tg.HapticFeedback&&tg.HapticFeedback.impactOccurred("light")}catch(e){}};
+let tmr; function toast(m){const t=$("toast");t.textContent=m;t.classList.add("on");buzz("error");clearTimeout(tmr);tmr=setTimeout(()=>t.classList.remove("on"),3200)}
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("on",s.id===id));window.scrollTo(0,0);
+  if(tg){const bb=tg.BackButton; if(id==="s-reg2"||id==="s-reg1"&&!ACC){bb.show()}else{bb.hide()}}}
+const ACC=(q.get("acc")||"").toLowerCase();
+const mode=q.get("m")||"auth";
+
+/* parol xeshi: serverdagi accounts.client_hash() bilan bir xil (PBKDF2-SHA256, tuz 'aitube:'+login, 100000 marta) */
+async function derive(user,pw){
+  if(!(window.crypto&&crypto.subtle)) return null;
+  const enc=new TextEncoder(), key=await crypto.subtle.importKey("raw",enc.encode(pw),"PBKDF2",false,["deriveBits"]);
+  const bits=await crypto.subtle.deriveBits({name:"PBKDF2",hash:"SHA-256",salt:enc.encode("aitube:"+user),iterations:ITERS},key,256);
+  return Array.from(new Uint8Array(bits)).map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+function send(obj){
+  const s=JSON.stringify(obj);
+  if(tg&&tg.sendData){tg.sendData(s)}else{toast("Bu sahifa Telegram ichida ochilishi kerak")}
+}
+function userErr(u){
+  if(!USER_RE.test(u)) return "3–24 belgi: lotin harflari, raqam, _ yoki .";
+  if(RESERVED.has(u)) return "Bu login band qilingan";
+  if(u.endsWith(".")||u.includes("..")) return "Nuqta bilan tugamasin va ketma-ket nuqta bo'lmasin";
+  return "";
+}
+function strength(p){let s=0;if(p.length>=8)s++;if(p.length>=12)s++;if(/[a-z]/.test(p)&&/[A-Z]/.test(p))s++;if(/\d/.test(p))s++;if(/[^A-Za-z0-9]/.test(p))s++;return Math.min(4,s)}
+const norm=v=>v.trim().toLowerCase().replace(/^@/,"");
+function setHint(el,input,msg,state){el.textContent=msg;el.className="hint "+(state||"");input.classList.toggle("bad",state==="bad");input.classList.toggle("good",state==="good")}
+
+/* eye toggles */
+document.querySelectorAll("[data-eye]").forEach(b=>b.onclick=()=>{const i=$(b.dataset.eye);i.type=i.type==="password"?"text":"password";b.textContent=i.type==="password"?"👁":"🙈";tap()});
+
+/* kirish */
+const lu=$("l-user"), lp=$("l-pass"), bl=$("b-login");
+const chkLogin=()=>{bl.disabled=!(norm(lu.value).length>=3&&lp.value.length>=1)};
+lu.oninput=lp.oninput=chkLogin;
+async function doLogin(){
+  const u=norm(lu.value); if(userErr(u)&&!USER_RE.test(u)){toast("Login noto'g'ri formatda");return}
+  bl.disabled=true;bl.textContent="Tekshirilmoqda…";
+  try{const ph=await derive(u,lp.value); send(ph?{t:"login",u,ph}:{t:"login",u,pw:lp.value})}
+  catch(e){toast("Xatolik: "+e.message);bl.disabled=false;bl.textContent="Kirish"}
+}
+bl.onclick=doLogin; lp.onkeydown=e=>{if(e.key==="Enter"&&!bl.disabled)doLogin()};
+$("to-reg").onclick=()=>{tap();show("s-reg1")}; $("to-login").onclick=()=>{tap();show("s-login")};
+
+/* ro'yxatdan o'tish */
+const ru=$("r-user"), rn=$("r-name"), rp=$("r-pass"), rp2=$("r-pass2"), bn=$("b-next");
+const COL=["#e5484d","#e5484d","#f5a524","#9acd32","#1fa971"];
+function chkReg(){
+  const u=norm(ru.value), p=rp.value, p2=rp2.value; let ok=true;
+  if(!u){setHint($("h-user"),ru,"");ok=false}else{const e=userErr(u);setHint($("h-user"),ru,e||"✓ Login yaroqli (band-yo'qligini bot tekshiradi)",e?"bad":"good");if(e)ok=false}
+  const s=strength(p), m=$("meter"); m.style.width=(p?(s+1)*20:0)+"%"; m.style.background=COL[s];
+  const pe=p.length<8?"Kamida 8 belgi":(!/[A-Za-z]/.test(p)||!/\d/.test(p))?"Harf va raqam bo'lsin":"";
+  if(!p){setHint($("h-pass"),rp,"");ok=false}else{setHint($("h-pass"),rp,pe||["","Zaif","O'rtacha","Yaxshi","Juda yaxshi"][s]||"Yaxshi",pe?"bad":"good");if(pe)ok=false}
+  if(!p2){setHint($("h-pass2"),rp2,"");ok=false}else if(p!==p2){setHint($("h-pass2"),rp2,"Parollar mos kelmadi","bad");ok=false}else setHint($("h-pass2"),rp2,"✓ Mos","good");
+  bn.disabled=!ok;
+}
+ru.oninput=rp.oninput=rp2.oninput=chkReg;
+bn.onclick=()=>{tap();show("s-reg2")};
+$("b-back1").onclick=()=>{tap();show("s-reg1")};
+const ag=$("c-agree"), bc=$("b-create"); ag.onchange=()=>{bc.disabled=!ag.checked;tap()};
+let created=null;
+bc.onclick=async()=>{
+  const u=norm(ru.value); bc.disabled=true; bc.textContent="Yaratilmoqda…";
+  try{
+    const ph=await derive(u,rp.value);
+    created=Object.assign({t:"register",u,n:rn.value.trim(),terms:true},ph?{ph}:{pw:rp.value});
+    $("d-user").textContent="@"+u; show("s-done"); buzz("success");
+  }catch(e){toast("Xatolik: "+e.message);bc.disabled=false;bc.textContent="Hisob yaratish"}
+};
+$("b-return").onclick=()=>{if(created){$("b-return").disabled=true;send(created)}};
+
+/* hisobda bo'lsa */
+$("b-open").onclick=()=>send({t:"open"});
+$("b-switch").onclick=()=>send({t:"switch"});
+if(tg) tg.BackButton.onClick(()=>{const on=document.querySelector(".screen.on").id; if(on==="s-reg2")show("s-reg1"); else if(on==="s-reg1")show("s-login")});
+
+/* boshlang'ich ekran */
+const pre=norm(q.get("u")||""); if(pre){lu.value=pre;ru.value=pre}
+if(ACC){$("a-user").textContent="@"+ACC;show("s-acc")}
+else if(mode==="register"){show("s-reg1");chkReg()}
+else{show("s-login")}
+chkLogin();
+})();
+</script>
+</body>
+</html>
